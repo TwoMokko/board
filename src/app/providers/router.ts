@@ -12,7 +12,7 @@ const routes = [
     },
     {
         name: 'auth',
-        path: '/news',
+        path: '/auth',
         component: AuthPage,
         meta: {
             layout: 'auth'

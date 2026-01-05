@@ -3,10 +3,10 @@ import Navbar from "../Navbar/Navbar.vue";
 </script>
 
 <template>
-    <header>
-        <Navbar />
-    </header>
-    <main>
+    <div class="flex justify-between h-svh bg-secondaryLight text-dark py-4 pr-4">
+      <Navbar class="flex-none" />
+      <main class="bg-secondary flex-auto rounded-xl p-4">
         <slot />
-    </main>
+      </main>
+    </div>
 </template>

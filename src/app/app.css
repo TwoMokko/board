@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    box-sizing: border-box;
+    &::selection {
+        background: #b6b8d2;
+        color: #4e5359;
+    }
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    position: relative;
+}
+
+#root {
+    height: 100%;
+}
+
+.background {
+    background: linear-gradient(135deg, #e0e7ff 0%, #f0f4ff 100%);
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+}
+
+/*#app {*/
+/*    display: flex;*/
+/*    justify-content: space-between;*/
+/*}*/
+
+:root {
+    --dark-color                : #252326;
+    --bg-main-color             : #f3efec;
+    --primary-color             : #9be8c8;
+    /*--primary-color             : #7ea46d;*/
+    --secondary-color           : #a1a1a1;
+    --secondary-light-color     : #a8a8a8;
+    --error-color               : #b7574c;
+
+    --font-logo                 : "Caesar Dressing", serif;
+}
