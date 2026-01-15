@@ -1,7 +1,7 @@
 import { api } from "../../../shared/api/client.ts"
-import { userSchema } from "../model"
+import { usersArraySchema } from "../model"
 
-export const fetchUser = async (userId: number) => {
-    const response = await api.get(`/users/${userId}`)
-    return userSchema.parse(response)
+export const fetchUsers = async () => {
+    const response = await api.get(`/users`)
+    return usersArraySchema.parse(response)
 }

@@ -1,5 +1,22 @@
 class ApiClient {
-    private baseUrl = 'http://localhost:8000'
+    private baseUrl: string = 'http://localhost:8000'
+    private token: string | null = localStorage.getItem('token')
+
+    setToken(token: string) {
+        this.token = token
+        localStorage.setItem('token', token)
+    }
+    clearToken() {
+        this.token = null
+        localStorage.removeItem('token')
+    }
+    hasToken(): boolean {
+        return !!this.token
+    }
+
+    getToken(): string | null {
+        return this.token
+    }
 
     private getDefaultHeaders(body?: BodyInit): Record<string, string> {
         if (body instanceof FormData) {
@@ -12,15 +29,13 @@ class ApiClient {
     }
 
     async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-        // const authStore = useAuthStore?.()
-        // const token = authStore?.token
-        // if (token) {
-        //     (headers as any)['Authorization'] = `Bearer ${token}`
-        // }
-
         const headers = {
             ...this.getDefaultHeaders(options.body),
             ...options.headers
+        }
+
+        if (this.token) {
+            headers['Authorization'] = `Bearer ${this.token}`
         }
 
 
@@ -30,9 +45,11 @@ class ApiClient {
         })
 
         if (!response.ok) {
-            // if (response.status === 401) {
-            //     authStore?.logout()
-            // }
+            if (response.status === 401) {
+                this.clearToken()
+                window.location.href = '/login'
+                throw new Error('Не авторизован')
+            }
             throw new Error(`HTTP error! status: ${response.status}`)
         }
 

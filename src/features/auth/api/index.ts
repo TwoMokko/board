@@ -1,0 +1,1 @@
+export { fetchUser } from './auth.api.ts'

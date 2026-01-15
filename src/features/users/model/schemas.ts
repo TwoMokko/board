@@ -8,5 +8,9 @@ export const userSchema = z.object({
     created_at: z.string()
 })
 
+export const usersArraySchema = z.array(userSchema)
+
 export type User = z.infer<typeof userSchema>
+export type UsersArray = z.infer<typeof usersArraySchema>
+
 

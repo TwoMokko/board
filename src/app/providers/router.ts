@@ -15,7 +15,8 @@ const routes = [
         path: '/auth',
         component: AuthPage,
         meta: {
-            layout: 'auth'
+            layout: 'auth',
+            guestOnly: true
         }
     },
     {
@@ -26,7 +27,10 @@ const routes = [
     {
         name: 'chat',
         path: '/chat',
-        component: ChatPage
+        component: ChatPage,
+        meta: {
+            requiresAuth: true
+        }
     },
 ]
 
@@ -34,3 +38,25 @@ export const router = createRouter({
     history: createWebHistory(),
     routes
 })
+
+// router.beforeEach(async (to,from, next) => {
+    // const auth = useAuth()
+    //
+    // if (!auth.isInitialized.value)
+    //     await auth.initialize()
+    //
+    // const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+    // const guestOnly = to.matched.some(record => record.meta.guestOnly)
+    //
+    // if (requiresAuth && !auth.isAuth.value) {
+    //     next({ name: 'login', query: { redirect: to.fullPath } })
+    //     return
+    // }
+    //
+    // if (guestOnly && auth.isAuth.value) {
+    //     next({ name: 'home' })
+    //     return
+    // }
+    //
+    // next()
+// })

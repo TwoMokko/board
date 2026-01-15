@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { useUser } from "../../../features/users/composables"
+import { useAuth } from "../../../features/auth/composables";
 
 // const { isPending, isFetching, isError, data, error } = useQuery({
 //   queryKey: ['user'],
 //   queryFn: () => api.get(`/users/${1}`),
 // })
 
-const { user, loading, error, refetch } = useUser(1)
-
+// const { user, loading, error, refetch } = useUser(1)
+const { user, isAuth, loading, error } = useAuth()
 </script>
 <template>
   home page
@@ -18,9 +18,5 @@ const { user, loading, error, refetch } = useUser(1)
   <div v-else-if="user">{{ user.username }}</div>
 
   <div v-else>not user data</div>
-
-  <button @click="refetch" :disabled="loading">
-    {{ loading ? 'Loading...' : 'Refresh' }}
-  </button>
 
 </template>
