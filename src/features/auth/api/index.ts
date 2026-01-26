@@ -1,1 +1,1 @@
-export { fetchUser } from './auth.api.ts'
+export { fetchCurrentUser } from './auth.api.ts'

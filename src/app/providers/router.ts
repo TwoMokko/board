@@ -11,8 +11,8 @@ const routes = [
         component: HomePage
     },
     {
-        name: 'auth',
-        path: '/auth',
+        name: 'login',
+        path: '/login',
         component: AuthPage,
         meta: {
             layout: 'auth',

@@ -1,11 +1,23 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { House, MessageCircle, NotepadText, Eye, EyeClosed } from 'lucide-vue-next';
+import {logout} from "../../../features/auth/api/auth.api.ts";
+import {useRouter} from "vue-router";
+import {api} from "../../api/client.ts";
 
 const isCollapse = ref<boolean>(false)
 
 const handleCollapsed = (): void => {
   isCollapse.value = !isCollapse.value
+}
+
+
+const router = useRouter()
+const handleLogout = async () => {
+  await logout()
+  api.clearToken()
+  store.clear()
+  router.push('/login')
 }
 </script>
 
@@ -28,6 +40,9 @@ const handleCollapsed = (): void => {
         <span :class="{ 'hidden': isCollapse }" class="">chat</span>
       </RouterLink>
     </nav>
+
+    <div @click="handleLogout">logout</div>
+
     <div @click="handleCollapsed" class="cursor-pointer">
       <EyeClosed v-if="isCollapse" />
       <Eye v-else />

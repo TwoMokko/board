@@ -1,20 +1,25 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import type { User } from "../../users/model";
 
 export const useAuthStore = defineStore('auth', () => {
     const currentUser = ref<User | null>(null)
-    const error = ref<string | null>(null)
     const isLoading = ref<boolean>(false)
     const isInitialized = ref<boolean>(false)
 
+    const isAuthenticated = computed(() => !!user.value)
+
     const setUser = (userData: User) => {
+        console.log({userData})
         currentUser.value = userData
     }
 
-    const setError = (errorMessage: string | null) => {
-        error.value = errorMessage
-        isLoading.value = false
+    const setLoading = (loading: boolean) => {
+        isLoading.value = loading
+    }
+
+    const setError = (err) => {
+        error.value = err
     }
 
     const clear = () => {
@@ -31,10 +36,12 @@ export const useAuthStore = defineStore('auth', () => {
     return {
         currentUser,
         isLoading,
-        error,
         isInitialized,
 
+        isAuthenticated,
+
         setUser,
+        setLoading,
         setError,
         clear,
         setInitialized

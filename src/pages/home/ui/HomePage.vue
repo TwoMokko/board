@@ -7,7 +7,7 @@ import { useAuth } from "../../../features/auth/composables";
 // })
 
 // const { user, loading, error, refetch } = useUser(1)
-const { user, isAuth, loading, error } = useAuth()
+const { currentUser, loading, error } = useAuth()
 </script>
 <template>
   home page
@@ -15,7 +15,7 @@ const { user, isAuth, loading, error } = useAuth()
   <div v-if="loading">data loading...</div>
   <div v-else-if="error" class="text-red-600">data error {{ error.message }}</div>
 
-  <div v-else-if="user">{{ user.username }}</div>
+  <div v-else-if="currentUser">{{ currentUser.username }}</div>
 
   <div v-else>not user data</div>
 

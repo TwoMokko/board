@@ -1,77 +1,92 @@
 import { storeToRefs } from "pinia"
 import { useMutation, useQuery } from "@tanstack/vue-query"
-import { computed, watch } from "vue"
-import { fetchUser } from "../api"
+import { computed } from "vue"
+import { fetchCurrentUser } from "../api"
 import { useAuthStore } from "../model/store.ts"
 import { api } from "../../../shared/api/client.ts"
-import type { User } from "../../users/model";
+import type { LoginData } from "../model/types.ts";
+import { login } from "../api/auth.api.ts";
 
 export function useAuth() {
     const authStore = useAuthStore()
-    const { currentUser, isLoading: storeLoading, error: storeError } = storeToRefs(authStore)
+    const {
+        currentUser,
+        isLoading,
+        isInitialized,
+        isAuthenticated
+    } = storeToRefs(authStore)
+
+    // const queryClient = useQueryClient()
 
     const currentUserQuery = useQuery({
         queryKey: ['currentUser'],
-        queryFn: () => fetchUser(),
+        queryFn: () => fetchCurrentUser(),
 
-
-        // ЗАЧЕМ это
-        // enabled: !!api.hasToken(),
-        // retry: false,
+        enabled: false,
+        retry: false,
     })
 
+    const fetchUserMutation = useMutation({
+        mutationFn: () => fetchCurrentUser(),
+        onSuccess: (userData) => {
+            authStore.setUser(userData)
+        },
+        onError: (error) => {
+            authStore.setError(error.message)
+            api.clearToken()
+            authStore.clear()
+        }
+    })
 
-    // const queryClient = useQueryClient()
-    const updateStoreMutation = useMutation({
-        mutationFn: async (data: User) => {
+    const loginMutation = useMutation({
+        mutationFn:  (credentials: LoginData) => login(credentials),
+        onMutate: () => {
+            authStore.setLoading(true)
+        },
+        onSuccess: (data) => {
             api.setToken(data.token)
             authStore.setUser(data.user)
-            return data
+            // queryClient.invalidateQueries({ queryKey: ['currentUser'] })
         },
         onError: (error) => {
             authStore.setError(error.message)
         },
-        // onSuccess: () => {
-        //     queryClient.invalidateQueries({ queryKey: ['user', userId] })
-        // }
-    })
-
-    watch(currentUserQuery.data, (data) => {
-        if (data) {
-            updateStoreMutation.mutate(data)
+        onSettled: () => {
+            authStore.setLoading(false)
         }
     })
 
-    // loginMutation использовать из "../api" login() и api.setToken(data.token), authStore.setUser(data.user)
-    // logoutMutation использовать из "../api" logout() и api.clearToken(), authStore.clear()
-    // registerMutation
+
 
     const initialize = async () => {
         if (isInitialized.value) return
 
-        if (api.hasToken() && !currentUser.value) {
-            try {
-                await currentUserQuery.refetch()
-            }
-            catch (err) {
-                api.clearToken()
-                authStore.clear()
-            }
-        }
+        if (api.hasToken() && !currentUser.value)
+            await fetchUserMutation.mutateAsync()
 
         authStore.setInitialized()
     }
 
-    const isAuth = computed(() => !!currentUser.value)
-    const loading = computed(() => currentUserQuery.isPending.value || storeLoading.value)
-    const error = computed(() => currentUserQuery.error.value?.message || storeError.value)
+    const loading = computed(() =>
+        isLoading.value ||
+        loginMutation.isPending.value ||
+        currentUserQuery.isLoading.value
+    )
+
+    const error = computed(() =>
+        loginMutation.error.value ||
+        currentUserQuery.error.value
+    )
 
     return {
         currentUser,
-        isAuth,
+        isAuthenticated,
         loading,
         error,
+        isInitialized,
+
+        login: loginMutation.mutate,
         initialize,
-        refetch: currentUserQuery.refetch
+        refetchUser: currentUserQuery.refetch
     }
 }

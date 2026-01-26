@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import Navbar from "../Navbar/Navbar.vue";
+
 </script>
 
 <template>
   <header>
-    auth
-    <Navbar />
+    <slot name="header" />
   </header>
   <main>
     <slot />
